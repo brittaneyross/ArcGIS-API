@@ -9,3 +9,17 @@ body,
   width: 100%;
   color: rgb(38,139,135);
 }
+
+
+.esri-popup__main-container {
+    outline: none;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
+    width: 500px;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-flow: column nowrap;
+
+}

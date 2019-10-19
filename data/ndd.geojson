@@ -1,0 +1,144 @@
+{
+  "currentVersion" : 10.7,
+  "id" : 0,
+  "name" : "OPdevs_WGS",
+  "type" : "Feature Layer",
+  "description" : "",
+  "geometryType" : "esriGeometryPoint",
+  "copyrightText" : "",
+  "parentLayer" : null,
+  "subLayers" : [ ],
+  "minScale" : 100000,
+  "maxScale" : 0,
+  "drawingInfo" : {
+    "renderer" : {
+      "type" : "uniqueValue",
+      "field1" : "verified",
+      "field2" : null,
+      "field3" : null,
+      "fieldDelimiter" : ", ",
+      "defaultSymbol" : {
+        "type" : "esriSMS",
+        "style" : "esriSMSCircle",
+        "color" : [ 0, 166, 116, 255 ],
+        "size" : 4,
+        "angle" : 0,
+        "xoffset" : 0,
+        "yoffset" : 0,
+        "outline" : {
+          "color" : [ 0, 0, 0, 255 ],
+          "width" : 1
+        }
+      },
+      "defaultLabel" : "<all other values>",
+      "uniqueValueInfos" : [ {
+        "symbol" : {
+          "type" : "esriSMS",
+          "style" : "esriSMSCircle",
+          "color" : [ 255, 0, 0, 255 ],
+          "size" : 5,
+          "angle" : 0,
+          "xoffset" : 0,
+          "yoffset" : 0,
+          "outline" : {
+            "color" : [ 0, 0, 0, 255 ],
+            "width" : 1
+          }
+        },
+        "value" : "N",
+        "label" : "no",
+        "description" : ""
+      }, {
+        "symbol" : {
+          "type" : "esriSMS",
+          "style" : "esriSMSCircle",
+          "color" : [ 76, 230, 0, 255 ],
+          "size" : 5,
+          "angle" : 0,
+          "xoffset" : 0,
+          "yoffset" : 0,
+          "outline" : {
+            "color" : [ 0, 0, 0, 255 ],
+            "width" : 1
+          }
+        },
+        "value" : "Y",
+        "label" : "yes",
+        "description" : ""
+      } ]
+    },
+    "transparency" : 0,
+    "labelingInfo" : null
+  },
+  "defaultVisibility" : true,
+  "extent" : {
+    "xmin" : -9773607.0471,
+    "ymin" : 5143355.656300001,
+    "xmax" : -9771911.8209,
+    "ymax" : 5144384.301399998,
+    "spatialReference" : {
+      "wkid" : 102100,
+      "latestWkid" : 3857
+    }
+  },
+  "hasAttachments" : false,
+  "htmlPopupType" : "esriServerHTMLPopupTypeAsHTMLText",
+  "displayField" : "devname",
+  "typeIdField" : null,
+  "fields" : [ {
+    "name" : "OBJECTID",
+    "type" : "esriFieldTypeOID",
+    "alias" : "OBJECTID",
+    "domain" : null
+  }, {
+    "name" : "Shape",
+    "type" : "esriFieldTypeGeometry",
+    "alias" : "Shape",
+    "domain" : null
+  }, {
+    "name" : "Id",
+    "type" : "esriFieldTypeInteger",
+    "alias" : "Id",
+    "domain" : null
+  }, {
+    "name" : "DevID",
+    "type" : "esriFieldTypeString",
+    "alias" : "DevID",
+    "length" : 10,
+    "domain" : null
+  }, {
+    "name" : "devname",
+    "type" : "esriFieldTypeString",
+    "alias" : "devname",
+    "length" : 100,
+    "domain" : null
+  }, {
+    "name" : "verified",
+    "type" : "esriFieldTypeString",
+    "alias" : "verified",
+    "length" : 1,
+    "domain" : {
+      "type" : "codedValue",
+      "name" : "yesno",
+      "codedValues" : [ {
+        "name" : "yes",
+        "code" : "Y"
+      }, {
+        "name" : "no",
+        "code" : "N"
+      } ]
+    }
+  } ],
+  "relationships" : [ ],
+  "canModifyLayer" : false,
+  "canScaleSymbols" : false,
+  "hasLabels" : false,
+  "capabilities" : "Map",
+  "maxRecordCount" : 1000,
+  "supportsStatistics" : true,
+  "supportsAdvancedQueries" : true,
+  "supportedQueryFormats" : "JSON, AMF",
+  "ownershipBasedAccessControlForFeatures" : {
+    "allowOthersToQuery" : true
+  }
+}
