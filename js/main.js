@@ -27,7 +27,7 @@ var renderer = {
         style: 'square',
       },
       {
-        value: 'in progress',
+        value: 'in_progress',
         color: 'red',
         style: 'square',
       }
@@ -245,7 +245,6 @@ view.popup.watch('visible', function(event) {
 });
 
 nddPoints.on('apply-edits', function() {
-  if(updateEdit == true){
     // Once edits are applied to the layer, remove the Editor from the UI
     view.ui.remove(editor);
 
@@ -265,8 +264,6 @@ nddPoints.on('apply-edits', function() {
     // Cancel the workflow so that once edits are applied, a new popup can be displayed
     editor.viewModel.cancelWorkflow();
 
-    updateEdit = false
-  }
 
 });
 
