@@ -1,38 +1,38 @@
-
+var removeUI = false
 //Style with renderers
 //renderers and symbols are needed for each type of data (point, line, polygon ect)
 //Symbology
-var defaultSym = {
-  type: 'simple-marker', //autocasts as a new SimpleFillSymbol() - you do not need to add a requirement arguement
-  style: 'square',
-  color: 'green',
-  outline: {
-    color: 'grey',
-    width: .25
-  }
-};
-
-//Renderer
-var renderer = {
-  type: 'simple', //autocasts as new SimpleRenderer()
-  symbol: defaultSym, //reference symbology set above
-  label: 'ndd points',
-  visualVariables: [{
-    type: 'color',
-    field: 'status_type', //set field to determine Symbology
-    stops: [{
-        value: 'complete',
-        color: 'green',
-        style: 'square',
-      },
-      {
-        value: 'in_progress',
-        color: 'red',
-        style: 'square',
-      }
-    ]
-  }]
-}
+// var defaultSym = {
+//   type: 'simple-marker', //autocasts as a new SimpleFillSymbol() - you do not need to add a requirement arguement
+//   style: 'square',
+//   color: 'green',
+//   outline: {
+//     color: 'grey',
+//     width: .25
+//   }
+// };
+//
+// //Renderer
+// var renderer = {
+//   type: 'simple', //autocasts as new SimpleRenderer()
+//   symbol: defaultSym, //reference symbology set above
+//   label: 'ndd points',
+//   visualVariables: [{
+//     type: 'color',
+//     field: 'status_type', //set field to determine Symbology
+//     stops: [{
+//         value: 'complete',
+//         color: 'green',
+//         style: 'square',
+//       },
+//       {
+//         value: 'in_progress',
+//         color: 'red',
+//         style: 'square',
+//       }
+//     ]
+//   }]
+// }
 
 //Require statements passes in esri map and map view
 //Also passing in function calls Map and MapView
@@ -53,6 +53,8 @@ require(['esri/Map',
   'esri/widgets/Editor',
   'esri/popup/content/AttachmentsContent',
   'esri/popup/content/TextContent',
+  "esri/symbols/SimpleMarkerSymbol",
+  "esri/symbols/TextSymbol"
 ], function(Map,
   MapView,
   FeatureLayer,
@@ -60,7 +62,9 @@ require(['esri/Map',
   PopupTemplate,
   Editor,
   AttachmentsContent,
-  TextContent) {
+  TextContent,
+  SimpleMarkerSymbol,
+TextSymbol) {
   //the names of the functions can be named anything
   //Instantiate the Map
   //Create the new map
@@ -83,6 +87,15 @@ require(['esri/Map',
     id: 'edit-this',
     className: 'esri-icon-edit'
   };
+
+  const editSymbol = new TextSymbol({
+    color: '#7A003C',
+    text: '\ue61b',  // esri-icon-editor
+    font: {  // autocast as new Font()
+      size: 24,
+      family: 'CalciteWebCoreIcons'
+    }
+  });
 
   //PopupTemplate
   const template = new PopupTemplate({
@@ -182,6 +195,8 @@ require(['esri/Map',
       }]
     });
 
+    view.ui.add(editor, "bottom-right");
+
     // Execute each time the "Edit feature" action is clicked
     function editThis() {
       // If the EditorViewModel's activeWorkflow is null, make the popup not visible
@@ -192,7 +207,7 @@ require(['esri/Map',
         editor.startUpdateWorkflowAtFeatureEdit(
           view.popup.selectedFeature
         );
-        view.ui.add(editor, "top-right");
+        view.ui.add(editor, "bottom-right");
         view.popup.spinnerEnabled = false;
       }
 
@@ -222,6 +237,7 @@ require(['esri/Map',
       }, 150);
     }
 
+
     // Event handler that fires each time an action is clicked
     view.popup.on("trigger-action", function(event) {
       if (event.action.id === "edit-this") {
@@ -230,7 +246,7 @@ require(['esri/Map',
     });
   });
 
-  // Watch when the popup is visible
+  // // Watch when the popup is visible
   view.popup.watch("visible", function(event) {
     // Check the Editor's viewModel state, if it is currently open and editing existing features, disable popups
     if (editor.viewModel.state === "editing-existing-feature") {
@@ -241,11 +257,13 @@ require(['esri/Map',
     }
   });
 
-  nddPoints.on("apply-edits", function() {
-    // Once edits are applied to the layer, remove the Editor from the UI
-    view.ui.remove(editor);
 
-    // Iterate through the features
+  //
+  nddPoints.on("edits", function(event) {
+    // Once edits are applied to the layer, remove the Editor from the UI
+    //view.ui.remove(editor);
+
+    //Iterate through the features
     features.forEach(function(feature) {
       // Reset the template for the feature if it was edited
       feature.popupTemplate = template;
@@ -260,6 +278,7 @@ require(['esri/Map',
 
     // Cancel the workflow so that once edits are applied, a new popup can be displayed
     editor.viewModel.cancelWorkflow();
+
   });
 
 });
