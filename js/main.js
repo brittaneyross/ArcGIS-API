@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 var app;
 
 require([
@@ -9,6 +10,8 @@ require([
   "esri/widgets/BasemapGallery",
   "esri/core/watchUtils",
 =======
+=======
+>>>>>>> parent of e757180... fixed update
 
 //Style with renderers
 //renderers and symbols are needed for each type of data (point, line, polygon ect)
@@ -66,6 +69,7 @@ require(['esri/Map',
   'esri/popup/content/AttachmentsContent',
   'esri/popup/content/TextContent',
 <<<<<<< HEAD
+<<<<<<< HEAD
   "esri/symbols/SimpleMarkerSymbol",
   "esri/symbols/TextSymbol",
   // Calcite Maps
@@ -83,6 +87,8 @@ require(['esri/Map',
 ], function(
   Map,
 =======
+=======
+>>>>>>> parent of e757180... fixed update
 ], function(Map,
 >>>>>>> parent of e757180... fixed update
   MapView,
@@ -95,6 +101,7 @@ require(['esri/Map',
   PopupTemplate,
   Editor,
   AttachmentsContent,
+<<<<<<< HEAD
 <<<<<<< HEAD
   TextContent,
   SimpleMarkerSymbol,
@@ -134,6 +141,8 @@ require(['esri/Map',
 
   // Map
 =======
+=======
+>>>>>>> parent of e757180... fixed update
   TextContent) {
   //the names of the functions can be named anything
   //Instantiate the Map
@@ -221,6 +230,7 @@ require(['esri/Map',
   CalciteMapsArcGIS.setPopupPanelSync(app.mapView);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   // 3D view
   app.sceneView = new SceneView({
     container: app.containerScene,
@@ -236,6 +246,8 @@ require(['esri/Map',
 
   CalciteMapsArcGIS.setPopupPanelSync(app.sceneView);
 =======
+=======
+>>>>>>> parent of e757180... fixed update
     // Execute each time the "Edit feature" action is clicked
     function editThis() {
       // If the EditorViewModel's activeWorkflow is null, make the popup not visible
@@ -264,6 +276,7 @@ require(['esri/Map',
 
   CalciteMapsArcGIS.setSearchExpandEvents(app.searchWidget);
 
+<<<<<<< HEAD
   // Create basemap widget
   app.basemapWidget = new Basemaps({
     view: app.activeView,
@@ -287,6 +300,8 @@ require(['esri/Map',
     if (fromView.type === "3d") {
       toView.container = app.containerMap;
 =======
+=======
+>>>>>>> parent of e757180... fixed update
     // Event handler that fires each time an action is clicked
     view.popup.on("trigger-action", function(event) {
       if (event.action.id === "edit-this") {
@@ -336,6 +351,7 @@ require(['esri/Map',
   });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   /******************************************************************
    *
    * Apply Calcite Maps CSS classes to change application on the fly
@@ -381,6 +397,8 @@ require(['esri/Map',
       );
       element.classList.add(bgColor);
 =======
+=======
+>>>>>>> parent of e757180... fixed update
   nddPoints.on("apply-edits", function() {
     // Once edits are applied to the layer, remove the Editor from the UI
     view.ui.remove(editor);
@@ -460,6 +478,9 @@ require(['esri/Map',
 =======
     // Cancel the workflow so that once edits are applied, a new popup can be displayed
     editor.viewModel.cancelWorkflow();
+<<<<<<< HEAD
+>>>>>>> parent of e757180... fixed update
+=======
 >>>>>>> parent of e757180... fixed update
   });
 
