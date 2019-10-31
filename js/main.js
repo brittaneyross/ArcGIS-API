@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var app;
 
 require([
@@ -7,12 +8,64 @@ require([
   "esri/widgets/Search",
   "esri/widgets/BasemapGallery",
   "esri/core/watchUtils",
+=======
+
+//Style with renderers
+//renderers and symbols are needed for each type of data (point, line, polygon ect)
+//Symbology
+var defaultSym = {
+  type: 'simple-marker', //autocasts as a new SimpleFillSymbol() - you do not need to add a requirement arguement
+  style: 'square',
+  color: 'green',
+  outline: {
+    color: 'grey',
+    width: .25
+  }
+};
+
+//Renderer
+var renderer = {
+  type: 'simple', //autocasts as new SimpleRenderer()
+  symbol: defaultSym, //reference symbology set above
+  label: 'ndd points',
+  visualVariables: [{
+    type: 'color',
+    field: 'status_type', //set field to determine Symbology
+    stops: [{
+        value: 'complete',
+        color: 'green',
+        style: 'square',
+      },
+      {
+        value: 'in_progress',
+        color: 'red',
+        style: 'square',
+      }
+    ]
+  }]
+}
+
+//Require statements passes in esri map and map view
+//Also passing in function calls Map and MapView
+//casing does matter!
+//all require statements can be find in each classes documentation
+
+//Flow to add layers
+// Load Module - Require statement (see class documentation)
+// create the layer - instantiate (ie var name = new layer)
+// set properties
+// add it to your Map
+
+require(['esri/Map',
+  'esri/views/MapView',
+>>>>>>> parent of e757180... fixed update
   'esri/layers/FeatureLayer',
   'esri/widgets/Popup',
   'esri/PopupTemplate',
   'esri/widgets/Editor',
   'esri/popup/content/AttachmentsContent',
   'esri/popup/content/TextContent',
+<<<<<<< HEAD
   "esri/symbols/SimpleMarkerSymbol",
   "esri/symbols/TextSymbol",
   // Calcite Maps
@@ -29,6 +82,9 @@ require([
   "@dojo/framework/shim/array"
 ], function(
   Map,
+=======
+], function(Map,
+>>>>>>> parent of e757180... fixed update
   MapView,
   SceneView,
   Search,
@@ -39,6 +95,7 @@ require([
   PopupTemplate,
   Editor,
   AttachmentsContent,
+<<<<<<< HEAD
   TextContent,
   SimpleMarkerSymbol,
   TextSymbol,
@@ -76,6 +133,13 @@ require([
    ******************************************************************/
 
   // Map
+=======
+  TextContent) {
+  //the names of the functions can be named anything
+  //Instantiate the Map
+  //Create the new map
+  //the map is the container of the map
+>>>>>>> parent of e757180... fixed update
   const map = new Map({
     basemap: app.basemap
   });
@@ -156,6 +220,7 @@ require([
 
   CalciteMapsArcGIS.setPopupPanelSync(app.mapView);
 
+<<<<<<< HEAD
   // 3D view
   app.sceneView = new SceneView({
     container: app.containerScene,
@@ -170,10 +235,26 @@ require([
   });
 
   CalciteMapsArcGIS.setPopupPanelSync(app.sceneView);
+=======
+    // Execute each time the "Edit feature" action is clicked
+    function editThis() {
+      // If the EditorViewModel's activeWorkflow is null, make the popup not visible
+      if (!editor.viewModel.activeWorkFlow) {
+        view.popup.visible = false;
+        // Call the Editor update feature edit workflow
+
+        editor.startUpdateWorkflowAtFeatureEdit(
+          view.popup.selectedFeature
+        );
+        view.ui.add(editor, "top-right");
+        view.popup.spinnerEnabled = false;
+      }
+>>>>>>> parent of e757180... fixed update
 
   // Set the active view to scene
   setActiveView(app.mapView);
 
+<<<<<<< HEAD
   // Create the search widget and add it to the navbar instead of view
   app.searchWidget = new Search({
       view: app.activeView
@@ -205,6 +286,21 @@ require([
     fromView.container = null;
     if (fromView.type === "3d") {
       toView.container = app.containerMap;
+=======
+    // Event handler that fires each time an action is clicked
+    view.popup.on("trigger-action", function(event) {
+      if (event.action.id === "edit-this") {
+        editThis();
+      }
+    });
+  });
+
+  // Watch when the popup is visible
+  view.popup.watch("visible", function(event) {
+    // Check the Editor's viewModel state, if it is currently open and editing existing features, disable popups
+    if (editor.viewModel.state === "editing-existing-feature") {
+      view.popup.close();
+>>>>>>> parent of e757180... fixed update
     } else {
       toView.container = app.containerScene;
     }
@@ -239,6 +335,7 @@ require([
     });
   });
 
+<<<<<<< HEAD
   /******************************************************************
    *
    * Apply Calcite Maps CSS classes to change application on the fly
@@ -283,6 +380,16 @@ require([
         "calcite-bgcolor-dark-red"
       );
       element.classList.add(bgColor);
+=======
+  nddPoints.on("apply-edits", function() {
+    // Once edits are applied to the layer, remove the Editor from the UI
+    view.ui.remove(editor);
+
+    // Iterate through the features
+    features.forEach(function(feature) {
+      // Reset the template for the feature if it was edited
+      feature.popupTemplate = template;
+>>>>>>> parent of e757180... fixed update
     });
     settingsColor.value = "";
   });
@@ -339,6 +446,7 @@ require([
     const layoutNav =
       event.target.options[event.target.selectedIndex].dataset.nav;
 
+<<<<<<< HEAD
     document.body.classList.remove(
       "calcite-nav-bottom",
       "calcite-nav-top"
@@ -349,6 +457,10 @@ require([
     nav.classList.remove("navbar-fixed-bottom", "navbar-fixed-top");
     nav.classList.add(layoutNav);
     setViewPadding(layout);
+=======
+    // Cancel the workflow so that once edits are applied, a new popup can be displayed
+    editor.viewModel.cancelWorkflow();
+>>>>>>> parent of e757180... fixed update
   });
 
   // Set view padding for widgets based on navbar position
