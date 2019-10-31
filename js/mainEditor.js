@@ -257,7 +257,6 @@ TextSymbol) {
     }
   });
 
-
   //
   nddPoints.on("edits", function(event) {
     // Once edits are applied to the layer, remove the Editor from the UI
