@@ -36,17 +36,17 @@ require([
     zoom: app.zoom
   });
 
-  var cmapCounties = new FeatureLayer('http://services5.arcgis.com/LcMXE3TFhi1BSaCY/arcgis/rest/services/MPOcounties_CMAP_201409/FeatureServer')
+  var cmapCounties = new FeatureLayer("http://services5.arcgis.com/LcMXE3TFhi1BSaCY/arcgis/rest/services/MPOcounties_CMAP_201409/FeatureServer")
   //map.add(cmapCounties);
 
-  var nddPoints = new FeatureLayer('https://services5.arcgis.com/GwzfxPSYbDxtMoCu/arcgis/rest/services/points/FeatureServer',
+  var nddPoints = new FeatureLayer("https://services5.arcgis.com/GwzfxPSYbDxtMoCu/arcgis/rest/services/points/FeatureServer")
     //outFields: ['*'],
     //opacity: 0.8,
     //renderer: renderer,
     //popupTemplate: template
-  )
+  //)
   //map.add(nddPoints)
-  app.map.addLayer(nddPoints)
+  app.map.addLayer(cmapCounties)
 
   app.map.on("load", function(){
     app.initialExtent = app.map.extent;
