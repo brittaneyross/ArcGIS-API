@@ -6,6 +6,9 @@ require([
   "esri/dijit/Search",
   "dojo/query",
   "esri/layers/FeatureLayer",
+  "esri/InfoTemplate",
+  "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol",
+  "esri/renderers/UniqueValueRenderer", "esri/Color",
 
   // Calcite Maps
   "calcite-maps/calcitemaps-v0.10",
@@ -16,7 +19,11 @@ require([
   "bootstrap/Tab",
 
   "dojo/domReady!"
-], function(Map, Search, query, FeatureLayer, CalciteMaps) {
+], function(Map, Search, query, FeatureLayer, InfoTemplate,
+  SimpleLineSymbol, SimpleFillSymbol,
+  UniqueValueRenderer, Color, CalciteMaps) {
+
+
 
   // App
   app = {
@@ -26,32 +33,40 @@ require([
     zoom: 9,
     initialExtent: null,
     searchWidgetNav: null,
-    searchWidgetPanel: null
+    searchWidgetPanel: null,
+    //layers:[cmapCounties]
   }
 
   // Map
   app.map = new Map("mapViewDiv", {
     basemap: app.basemap,
     center: app.center,
-    zoom: app.zoom
+    zoom: app.zoom,
   });
 
-  var cmapCounties = new FeatureLayer("http://services5.arcgis.com/LcMXE3TFhi1BSaCY/arcgis/rest/services/MPOcounties_CMAP_201409/FeatureServer")
-  //map.add(cmapCounties);
+  function addBaseLayers() {
+    var cmapCounties = new FeatureLayer("https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Census2010/MapServer/100", {
+      mode: FeatureLayer.MODE_ONDEMAND,
+      outFields: ["*"],
+    })
+    app.map.addLayer(cmapCounties);
 
-  var nddPoints = new FeatureLayer("https://services5.arcgis.com/GwzfxPSYbDxtMoCu/arcgis/rest/services/points/FeatureServer")
-    //outFields: ['*'],
-    //opacity: 0.8,
-    //renderer: renderer,
-    //popupTemplate: template
-  //)
-  //map.add(nddPoints)
-  app.map.addLayer(cmapCounties)
+    var nddPointsLyr = new FeatureLayer("https://services5.arcgis.com/GwzfxPSYbDxtMoCu/arcgis/rest/services/points/FeatureServer", {
+      mode: FeatureLayer.MODE_ONDEMAND,
+      outFields: ["*"],
+    })
 
-  app.map.on("load", function(){
+    app.map.addLayer(nddPointsLyr)
+  }
+
+  app.map.on("load", function() {
     app.initialExtent = app.map.extent;
+    //app.map.addLayer(cmapCounties)
 
   })
+
+  app.map.on("load", addBaseLayers)
+
 
   // Search
   app.searchDivNav = createSearchWidget("searchNavDiv");
@@ -61,13 +76,13 @@ require([
     var search = new Search({
       map: app.map,
       enableHighlight: false
-      }, parentId);
+    }, parentId);
     search.startup();
     return search;
   }
 
   // Basemaps
-  query("#selectBasemapPanel").on("change", function(e){
+  query("#selectBasemapPanel").on("change", function(e) {
     app.map.setBasemap(e.target.options[e.target.selectedIndex].value);
   });
 
