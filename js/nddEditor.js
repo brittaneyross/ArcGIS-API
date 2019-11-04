@@ -59,32 +59,37 @@ require([
   });
 
   map.on("layers-add-result", initEditor);
-  map.on("load",function(){
-  map.enableScrollWheel();
+  map.on("load", function() {
+    map.enableScrollWheel();
   })
 
   //add boundaries and place names
   var labels = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer");
   map.addLayer(labels);
 
-  var responsePoints = new FeatureLayer("https://services5.arcgis.com/GwzfxPSYbDxtMoCu/arcgis/rest/services/nddPointsLayr/FeatureServer/0", {
+  var nddPoints = new FeatureLayer("https://services5.arcgis.com/GwzfxPSYbDxtMoCu/arcgis/rest/services/nddPointsLayr/FeatureServer/0", {
     mode: FeatureLayer.MODE_ONDEMAND,
-    outFields: ['*']
+    outFields: ["*"]
   });
 
-  var responsePolys = new FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/2", {
+  //instantiate cmap counties feature layer
+  var cmapCounties = new FeatureLayer("http://services5.arcgis.com/LcMXE3TFhi1BSaCY/arcgis/rest/services/MPOcounties_CMAP_201409/FeatureServer/0", {
     mode: FeatureLayer.MODE_ONDEMAND,
-    outFields: ['*']
-  });
+    outFields: ["*"]
+  })
+  cmapCounties.on("load", function(){
+    cmapCounties.disableMouseEvents()
+  })
 
-  map.addLayers([responsePoints]);
+
+  map.addLayers([nddPoints]);
 
   function initEditor(evt) {
     var templateLayers = arrayUtils.map(evt.layers, function(result) {
       return result.layer;
     });
     var templatePicker = new TemplatePicker({
-      featureLayers: templateLayers,
+      featureLayers: [nddPoints],
       grouping: true,
       rows: "auto",
       columns: 1
@@ -93,9 +98,11 @@ require([
 
     var layers = arrayUtils.map(evt.layers, function(result) {
       return {
-        featureLayer: result.layer
-      };
+          featureLayer: result.layer
+        }
     });
+
+    console.log(layers)
     var settings = {
       map: map,
       templatePicker: templatePicker,
@@ -117,7 +124,7 @@ require([
     var params = {
       settings: settings
     };
-    var myEditor = new Editor(params, 'editorDiv');
+    var myEditor = new Editor(params, "editorDiv");
     //define snapping options
     var symbol = new SimpleMarkerSymbol(
       SimpleMarkerSymbol.STYLE_CROSS,
