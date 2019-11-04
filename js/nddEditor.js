@@ -1,14 +1,27 @@
-var app;
+var map;
 
 require([
-  // ArcGIS
   "esri/map",
   "esri/dijit/Search",
   "dojo/query",
+  "esri/tasks/GeometryService",
+
+  "esri/layers/ArcGISTiledMapServiceLayer",
   "esri/layers/FeatureLayer",
-  "esri/InfoTemplate",
-  "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol",
-  "esri/renderers/UniqueValueRenderer", "esri/Color",
+
+  "esri/Color",
+  "esri/symbols/SimpleMarkerSymbol",
+  "esri/symbols/SimpleLineSymbol",
+
+  "esri/dijit/editing/Editor",
+  "esri/dijit/editing/TemplatePicker",
+
+  "esri/config",
+  "dojo/i18n!esri/nls/jsapi",
+
+  "dojo/_base/array", "dojo/parser", "dojo/keys",
+
+  "dijit/layout/BorderContainer", "dijit/layout/ContentPane",
 
   // Calcite Maps
   "calcite-maps/calcitemaps-v0.10",
@@ -19,62 +32,119 @@ require([
   "bootstrap/Tab",
 
   "dojo/domReady!"
-], function(Map, Search, query, FeatureLayer, InfoTemplate,
-  SimpleLineSymbol, SimpleFillSymbol,
-  UniqueValueRenderer, Color, CalciteMaps) {
+], function(
+  Map, Search, query, GeometryService,
+  ArcGISTiledMapServiceLayer, FeatureLayer,
+  Color, SimpleMarkerSymbol, SimpleLineSymbol,
+  Editor, TemplatePicker,
+  esriConfig, jsapiBundle,
+  arrayUtils, parser, keys
+) {
+  parser.parse();
 
+  // snapping is enabled for this sample - change the tooltip to reflect this
+  jsapiBundle.toolbars.draw.start = jsapiBundle.toolbars.draw.start + "<br>Press <b>ALT</b> to enable snapping";
 
+  // refer to "Using the Proxy Page" for more information:  https://developers.arcgis.com/javascript/3/jshelp/ags_proxy.html
+  esriConfig.defaults.io.proxyUrl = "/proxy/";
 
-  // App
-  app = {
-    map: null,
-    basemap: "dark-gray",
-    center: [-88.1285691261062, 41.793264502709576], // lon, lat
+  //This service is for development and testing purposes only. We recommend that you create your own geometry service for use within your applications.
+  esriConfig.defaults.geometryService = new GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+
+  map = new Map("map", {
+    basemap: "satellite",
+    center: [-88.1285691261062, 41.793264502709576],
     zoom: 9,
-    initialExtent: null,
-    searchWidgetNav: null,
-    searchWidgetPanel: null,
-    //layers:[cmapCounties]
-  }
-
-  // Map
-  app.map = new Map("mapViewDiv", {
-    basemap: app.basemap,
-    center: app.center,
-    zoom: app.zoom,
+    slider: false
   });
 
-  function addBaseLayers() {
-    var cmapCounties = new FeatureLayer("https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Census2010/MapServer/100", {
-      mode: FeatureLayer.MODE_ONDEMAND,
-      outFields: ["*"],
-    })
-    app.map.addLayer(cmapCounties);
-
-    var nddPointsLyr = new FeatureLayer("https://services5.arcgis.com/GwzfxPSYbDxtMoCu/arcgis/rest/services/points/FeatureServer", {
-      mode: FeatureLayer.MODE_ONDEMAND,
-      outFields: ["*"],
-    })
-
-    app.map.addLayer(nddPointsLyr)
-  }
-
-  app.map.on("load", function() {
-    app.initialExtent = app.map.extent;
-    //app.map.addLayer(cmapCounties)
-
+  map.on("layers-add-result", initEditor);
+  map.on("load",function(){
+  map.enableScrollWheel();
   })
 
-  app.map.on("load", addBaseLayers)
+  //add boundaries and place names
+  var labels = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer");
+  map.addLayer(labels);
 
+  var responsePoints = new FeatureLayer("https://services5.arcgis.com/GwzfxPSYbDxtMoCu/arcgis/rest/services/nddPointsLayr/FeatureServer/0", {
+    mode: FeatureLayer.MODE_ONDEMAND,
+    outFields: ['*']
+  });
+
+  var responsePolys = new FeatureLayer("https://sampleserver6.arcgisonline.com/arcgis/rest/services/Wildfire/FeatureServer/2", {
+    mode: FeatureLayer.MODE_ONDEMAND,
+    outFields: ['*']
+  });
+
+  map.addLayers([responsePoints]);
+
+  function initEditor(evt) {
+    var templateLayers = arrayUtils.map(evt.layers, function(result) {
+      return result.layer;
+    });
+    var templatePicker = new TemplatePicker({
+      featureLayers: templateLayers,
+      grouping: true,
+      rows: "auto",
+      columns: 1
+    }, "templateDiv");
+    templatePicker.startup();
+
+    var layers = arrayUtils.map(evt.layers, function(result) {
+      return {
+        featureLayer: result.layer
+      };
+    });
+    var settings = {
+      map: map,
+      templatePicker: templatePicker,
+      layerInfos: layers,
+      toolbarVisible: true,
+      createOptions: {
+        polylineDrawTools: [Editor.CREATE_TOOL_FREEHAND_POLYLINE],
+        polygonDrawTools: [Editor.CREATE_TOOL_FREEHAND_POLYGON,
+          Editor.CREATE_TOOL_CIRCLE,
+          Editor.CREATE_TOOL_TRIANGLE,
+          Editor.CREATE_TOOL_RECTANGLE
+        ]
+      },
+      toolbarOptions: {
+        reshapeVisible: true
+      }
+    };
+
+    var params = {
+      settings: settings
+    };
+    var myEditor = new Editor(params, 'editorDiv');
+    //define snapping options
+    var symbol = new SimpleMarkerSymbol(
+      SimpleMarkerSymbol.STYLE_CROSS,
+      15,
+      new SimpleLineSymbol(
+        SimpleLineSymbol.STYLE_SOLID,
+        new Color([255, 0, 0, 0.5]),
+        5
+      ),
+      null
+    );
+    map.enableSnapping({
+      snapPointSymbol: symbol,
+      tolerance: 20,
+      snapKey: keys.ALT
+    });
+
+    myEditor.startup();
+  }
 
   // Search
-  app.searchDivNav = createSearchWidget("searchNavDiv");
-  app.searchWidgetPanel = createSearchWidget("searchPanelDiv");
+  map.searchDivNav = createSearchWidget("searchNavDiv");
+  map.searchWidgetPanel = createSearchWidget("searchPanelDiv");
 
   function createSearchWidget(parentId) {
     var search = new Search({
-      map: app.map,
+      map: map,
       enableHighlight: false
     }, parentId);
     search.startup();
@@ -83,12 +153,12 @@ require([
 
   // Basemaps
   query("#selectBasemapPanel").on("change", function(e) {
-    app.map.setBasemap(e.target.options[e.target.selectedIndex].value);
+    map.setBasemap(e.target.options[e.target.selectedIndex].value);
   });
 
   // Home
   query(".calcite-navbar .navbar-brand").on("click", function(e) {
-    app.map.setExtent(app.initialExtent);
+    map.setExtent(map.initialExtent);
   })
 
 });
